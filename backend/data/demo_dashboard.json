@@ -1,0 +1,22 @@
+{
+  "goals": [
+    {"key": "creation", "title": "每周完成一个可展示的小作品"},
+    {"key": "balance", "title": "建立规律的学习和休息习惯"}
+  ],
+  "projects": [
+    {"key": "lifeos", "goal": "creation", "title": "Life OS v0.1 展示原型"},
+    {"key": "rhythm", "goal": "balance", "title": "一周生活节奏实验"}
+  ],
+  "tasks": [
+    {"project": "lifeos", "title": "梳理生命驾驶舱的信息结构", "status": "done", "due_offset": 0},
+    {"project": "lifeos", "title": "完成驾驶舱卡片的第一版", "status": "in_progress", "due_offset": 0},
+    {"project": "rhythm", "title": "留出 10 分钟记录今天的感受", "status": "todo", "due_offset": 0},
+    {"project": "lifeos", "title": "准备下一次展示的讲解提纲", "status": "todo", "due_offset": 1},
+    {"project": "rhythm", "title": "回顾一周中最专注的时段", "status": "done", "due_offset": -1}
+  ],
+  "memories": [
+    {"kind": "stage", "content": "探索与验证", "days_ago": 0},
+    {"kind": "status", "content": "把注意力放在一个可以完成的小行动上。", "days_ago": 0},
+    {"kind": "review", "content": "今天先完成了一小步。比起同时开始很多事情，清晰地结束一件事让我更有掌控感。", "days_ago": 1}
+  ]
+}

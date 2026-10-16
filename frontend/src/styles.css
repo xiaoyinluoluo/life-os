@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply m-0 bg-slate-50 text-slate-800 antialiased; font-family: Inter, "Microsoft YaHei", sans-serif; }
+  button { @apply rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50; }
+  a:focus-visible, button:focus-visible { @apply outline outline-2 outline-offset-4 outline-emerald-600; }
+}
