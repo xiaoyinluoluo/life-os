@@ -2,6 +2,8 @@
 
 Personal Life Operating System · 个人生命操作系统。
 
+在线云端版：[打开 Life OS](https://xiaoyinluoluo.github.io/life-os/)。使用邮箱注册并登录后，档案、目标、任务、复盘、笔记和对话保存在 Supabase，可在不同设备登录同一账号访问。云端版源码和部署说明见 [`cloud/README.md`](cloud/README.md)。以下运行说明主要针对原有本地版；本地 SQLite 数据和 Obsidian 文件不会自动上传到云端。
+
 本版本包含生命驾驶舱、Life Companion 模拟聊天、Obsidian 只读索引和需要明确确认的 Agent 工具执行。方案使用本地模拟编排，确认后真实保存项目和任务，不调用真实 AI。
 
 ## 目录

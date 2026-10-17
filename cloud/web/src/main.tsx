@@ -37,7 +37,7 @@ function App() {
     try {
       const result = mode==="login"
         ? await supabase.auth.signInWithPassword({email,password})
-        : await supabase.auth.signUp({email,password});
+        : await supabase.auth.signUp({email,password,options:{emailRedirectTo:location.origin+import.meta.env.BASE_URL}});
       if (result.error) throw result.error;
       if (mode==="signup" && !result.data.session) setMessage("注册已提交。请查收验证邮件，验证后再登录。");
     } catch (error) {
