@@ -1,0 +1,9 @@
+.auth-shell{min-height:100vh;display:grid;place-items:center;padding:24px;background:#f5f8f4;color:#264736}
+.auth-card{width:min(100%,420px);background:#fff;border:1px solid #dfe8de;border-radius:18px;padding:32px;box-shadow:0 18px 50px #1c392414}
+.auth-brand{font-size:24px;color:#2e7052;margin-bottom:24px}
+.auth-card h1{font-size:24px;margin-bottom:10px}
+.auth-card p{font-size:13px;line-height:1.7;color:#5c7162}
+.auth-card form{display:grid;gap:14px;margin:22px 0}
+.auth-card label{font-size:13px;display:grid;gap:7px}
+.auth-card .primary,.auth-card .secondary{width:100%}
+.auth-card small{font-size:11px;line-height:1.7;color:#7d8e81}
