@@ -34,3 +34,4 @@ venv/
 *.p12
 *.pfx
 Thumbs.db
+*.manifest.json
