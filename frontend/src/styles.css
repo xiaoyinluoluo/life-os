@@ -7,3 +7,36 @@
   button { @apply rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50; }
   a:focus-visible, button:focus-visible { @apply outline outline-2 outline-offset-4 outline-emerald-600; }
 }
+
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+
+.wallpaper-dark nav a:not([aria-current="page"]), .wallpaper-dark footer { color: #fff !important; text-shadow: 0 1px 4px #000; }
+.wallpaper-dark main > div > h1, .wallpaper-dark main > div > header h1, .wallpaper-dark main > div > header p { color: white; text-shadow: 0 1px 5px #000; }
+.wallpaper-dark nav a:not([aria-current="page"]):hover { background: #0009; }
+
+.life-glass { color: #fff9e9; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); text-shadow: 0 1px 2px #0008; }
+.life-glass-brown { background: rgba(75, 48, 30, .84); border-color: rgba(235, 205, 163, .35); }
+.life-glass-green { background: rgba(23, 80, 49, .84); border-color: rgba(166, 219, 176, .4); }
+.life-glass :is(p, label, h2, .text-slate-600, .text-emerald-950, .text-emerald-800, .text-amber-900) { color: #fff9e9; }
+.life-glass :is(input, select, textarea) { color: #1e293b; background: rgba(255, 253, 245, .96); text-shadow: none; }
+.life-glass input::placeholder { color: #59636d; }
+
+/* Main panels share the translucent earth palette; nested notices keep their own colors. */
+.life-panel { color: #fff9e9; background: rgba(75, 48, 30, .88); border-color: rgba(235, 205, 163, .35); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.life-panel:nth-of-type(even) { background: rgba(23, 80, 49, .88); border-color: rgba(166, 219, 176, .4); }
+.life-panel :is(input, textarea, select) { color: #1e293b; background: rgba(255,253,245,.96); }
+.life-panel :is(input, textarea)::placeholder { color: #59636d; }
+.life-panel > :is(h2,h3,p,label,summary,div:not([class*="bg-"])), .life-panel > form > :is(p,label), .life-panel > a { color: #fff9e9; }
+.life-panel > :is(p,label) a, .life-panel > a { color: #c9f9da; }
+
+/* Handwritten navigation with a light surface for contrast over any wallpaper. */
+.life-navigation a, .wallpaper-dark .life-navigation a:not([aria-current="page"]) { font-family: KaiTi, STKaiti, "Comic Sans MS", cursive; font-size: 1.1rem; font-weight: 700; letter-spacing: .04em; color: #603c27 !important; background: rgba(255, 244, 221, .88); text-shadow: none; border: 1px solid rgba(113, 76, 47, .25); }
+.life-navigation a[aria-current="page"] { color: #4b2b19 !important; background: rgba(226, 197, 154, .96); border-color: rgba(96, 60, 39, .55); }
+.life-navigation a:hover, .wallpaper-dark .life-navigation a:not([aria-current="page"]):hover { background: rgba(245, 222, 186, .97); }
+
+.life-navigation a, .wallpaper-dark .life-navigation a:not([aria-current="page"]) { background: rgba(186, 219, 165, .93); color: #3a2113 !important; border-color: rgba(62, 104, 61, .4); }
+.life-navigation a[aria-current="page"] { background: rgba(153, 200, 130, .98); color: #2c160b !important; border-color: rgba(52, 94, 52, .65); }
+.life-navigation a:hover, .wallpaper-dark .life-navigation a:not([aria-current="page"]):hover { background: rgba(205, 231, 186, .98); }
+
+body { isolation: isolate; }
+#life-wallpaper { position: fixed; inset: -30px; z-index: -1; pointer-events: none; }

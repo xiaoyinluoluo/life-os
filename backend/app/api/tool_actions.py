@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from app.models import Goal, Project, Task, ToolExecutionLog
+from app.models import Goal, Project, Task, ToolExecutionLog, UserProfile
 from app.services.database import get_session
 from app.agents.registry import get_companion_agent
 from app.schemas.tool_actions import PreviewRequest, ConfirmationRequest, CancelRequest, ToolCallRequest
@@ -40,7 +40,10 @@ def execute_read_tool(tool_name: str, request: ToolCallRequest, session: Session
 
 @router.get('/api/companion/goals')
 def goals(session: Session = Depends(get_session)):
-    rows = session.scalars(select(Goal).where(Goal.profile_id == 1, Goal.status == 'active').order_by(Goal.id)).all()
+    query = select(Goal).where(Goal.profile_id == 1, Goal.status == 'active')
+    if session.get(UserProfile, 1).workspace_mode == 'personal':
+        query = query.where(Goal.is_demo == 0)
+    rows = session.scalars(query.order_by(Goal.id)).all()
     return {'items': [dict(id=row.id, title=row.title) for row in rows]}
 
 

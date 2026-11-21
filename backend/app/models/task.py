@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import CheckConstraint, Column, Date, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, CheckConstraint, Column, Date, DateTime, ForeignKey, Integer, String, Text
 from app.models.base import Base
 
 
@@ -11,9 +11,12 @@ class Task(Base):
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
     title = Column(Text, nullable=False)
     description = Column(Text, nullable=False, default='', server_default='')
+    review = Column(Text, nullable=False, default='', server_default='')
     priority = Column(String(20), nullable=False, default='medium', server_default='medium')
     status = Column(String(20), nullable=False, default='todo')
     due_date = Column(Date, nullable=True, index=True)
+    focus_date = Column(Date, nullable=True)
+    archived = Column(Boolean, nullable=False, default=False, server_default='0')
     completed_at = Column(DateTime(timezone=True), nullable=True)
     is_demo = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))

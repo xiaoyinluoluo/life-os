@@ -20,17 +20,20 @@ async def get_dashboard(session: Session, today=None) -> DashboardResponse:
     profile = session.get(UserProfile, profile_id)
     if profile is None:
         raise ProfileNotFound('User profile missing')
+    personal = profile.workspace_mode == 'personal'
     today = today or datetime.now(BUSINESS_TZ).date()
-    goals = session.scalars(select(Goal).where(Goal.profile_id == profile_id).order_by(Goal.id).limit(50)).all()
-    projects = session.scalars(select(Project).join(Goal, Project.goal_id == Goal.id).where(Project.profile_id == profile_id, Goal.profile_id == profile_id).order_by(Project.id).limit(50)).all()
+    goals = session.scalars(select(Goal).where(Goal.profile_id == profile_id, Goal.is_demo == 0 if personal else True).order_by(Goal.id).limit(50)).all()
+    projects = session.scalars(select(Project).join(Goal, Project.goal_id == Goal.id).where(Project.profile_id == profile_id, Goal.profile_id == profile_id, Project.is_demo == 0 if personal else True).order_by(Project.id).limit(50)).all()
     # Include only tasks whose project and goal belong to the current profile.
-    task_query = select(Task).join(Project, Task.project_id == Project.id).join(Goal, Project.goal_id == Goal.id).where(Task.profile_id == profile_id, Project.profile_id == profile_id, Goal.profile_id == profile_id)
-    tasks = session.scalars(task_query.where(Task.due_date == today).order_by(Task.id)).all()
+    task_query = select(Task).join(Project, Task.project_id == Project.id).join(Goal, Project.goal_id == Goal.id).where(Task.profile_id == profile_id, Project.profile_id == profile_id, Goal.profile_id == profile_id, Task.is_demo == 0 if personal else True)
+    tasks = session.scalars(task_query.where(
+        Task.due_date == today, Task.archived.is_(False), (Goal.status == 'active') | (Task.status == 'done'),
+    ).order_by(Task.id)).all()
     done = session.scalars(task_query.where(Task.status == 'done', Task.completed_at.is_not(None)).order_by(Task.completed_at.desc(), Task.id.desc()).limit(5)).all()
     def latest(kind):
-        return session.scalar(select(Memory).where(Memory.profile_id == profile_id, Memory.kind == kind).order_by(Memory.created_at.desc(), Memory.id.desc()).limit(1))
+        return session.scalar(select(Memory).where(Memory.profile_id == profile_id, Memory.kind == kind, Memory.is_demo == 0 if personal else True).order_by(Memory.created_at.desc(), Memory.id.desc()).limit(1))
     stage, status = latest('stage'), latest('status')
-    reviews = session.scalars(select(Memory).where(Memory.profile_id == profile_id, Memory.kind == 'review').order_by(Memory.created_at.desc(), Memory.id.desc()).limit(3)).all()
+    reviews = session.scalars(select(Memory).where(Memory.profile_id == profile_id, Memory.kind == 'review', Memory.is_demo == 0 if personal else True).order_by(Memory.created_at.desc(), Memory.id.desc()).limit(3)).all()
     core_goal = next((goal.title for goal in goals if goal.status == 'active'), profile.goals[0] if profile.goals else '尚未设置核心目标')
     completed = sum(task.status == 'done' for task in tasks)
     progress = Progress(total=len(tasks), completed=completed, percentage=round(completed * 100 / len(tasks)) if tasks else 0)

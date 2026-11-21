@@ -55,7 +55,9 @@ try {
     $vitePath = Join-Path $projectRoot 'frontend\node_modules\vite\bin\vite.js'
     if (-not (Test-Path -LiteralPath $pythonPath)) { throw 'Backend .venv is missing. Follow README setup instructions.' }
     if (-not (Test-Path -LiteralPath $vitePath)) { throw 'Frontend dependencies are missing. Run npm ci in frontend.' }
-    $nodePath = (Get-Command node.exe -ErrorAction Stop).Source
+    $nodeCommand = Get-Command node.exe -ErrorAction SilentlyContinue
+    $nodePath = if ($nodeCommand) { $nodeCommand.Source } else { Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' }
+    if (-not (Test-Path -LiteralPath $nodePath)) { throw 'Node.js is missing. Install Node.js 20.19 or newer and try again.' }
     New-Item -ItemType Directory -Path $runtimeDirectory -Force | Out-Null
     $entries = @($entries | Where-Object { Get-TrackedProcess $_ })
 

@@ -7,6 +7,7 @@ class UserProfile(Base):
     __tablename__ = 'user_profiles'
 
     id = Column(Integer, primary_key=True)
+    workspace_mode = Column(String(20), nullable=False, default='pending', server_default='pending')
     name = Column(String(80), nullable=False)
     background = Column(Text, nullable=False, default='')
     skills = Column(JSON, nullable=False, default=list)
