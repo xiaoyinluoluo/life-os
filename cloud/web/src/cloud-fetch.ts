@@ -15,7 +15,7 @@ export async function loadMoreRecords(kind:RecordKind){pageLimits.set(kind,(page
 function key(kind:RecordKind,id:string){return `${kind}:${id}`}
 async function reload(){
  const all:CloudRecord[]=[];
- for(const kind of kinds){for(let page=0;page<(pageLimits.get(kind)||1);page++) {const rows=await listRecords(kind,page);all.push(...rows);exhaustedKinds.set(kind,rows.length<50);if(rows.length<50)break}}
+ await Promise.all(kinds.map(async kind=>{for(let page=0;page<(pageLimits.get(kind)||1);page++) {const rows=await listRecords(kind,page);all.push(...rows);exhaustedKinds.set(kind,rows.length<50);if(rows.length<50)break}}));
  cache=new Map(all.map(r=>[key(r.kind,r.id),r]));
  const state:any=empty();
  for(const row of all){if(row.kind==='profile'&&row.id==='main')state.profile=row.data;else if(arrays.includes(row.kind))state[plural(row.kind)].push(row.data);else if(row.kind==='setting')state.settings.push(row.data)}

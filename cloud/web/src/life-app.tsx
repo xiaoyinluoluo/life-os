@@ -17,7 +17,7 @@ function Empty({children}:{children:React.ReactNode}){return <div className="emp
 function Section({title,aside,children}:{title:string;aside?:React.ReactNode;children:React.ReactNode}){return <section className="panel"><div className="panel-title"><h2>{title}</h2>{aside}</div>{children}</section>}
 
 export default function LifeApp(){
- const [data,setData]=useState<Data|null>(null),[tab,setTab]=useState('dashboard'),[busy,setBusy]=useState(false),[error,setError]=useState(''),[updated,setUpdated]=useState(''),[online,setOnline]=useState(true);
+ const [data,setData]=useState<Data|null>(null),[tab,setTab]=useState('dashboard'),[busy,setBusy]=useState(false),[error,setError]=useState(''),[updated,setUpdated]=useState(''),[online,setOnline]=useState(false);
  const version=useRef(''),inFlight=useRef(false),generation=useRef(0);
  const [taskDraft,setTaskDraft]=useState<Record<string,string>>({});
  const [goal,setGoal]=useState(''),[draft,setDraft]=useState(''),[goalId,setGoalId]=useState(''),[proposal,setProposal]=useState<any>(null),[review,setReview]=useState(''),[weeklyReview,setWeeklyReview]=useState(''),[noteName,setNoteName]=useState(''),[note,setNote]=useState(''),[search,setSearch]=useState('');
@@ -28,7 +28,7 @@ export default function LifeApp(){
  const refresh=useCallback(async(force=false)=>{
   if(inFlight.current||(!force&&editingRef.current))return;
   const stamp=++generation.current;
-  try{const r=await lifeFetch();const body:any=await r.json();if(!r.ok)throw new Error(body.error||'云端暂时无法读取。');if(stamp!==generation.current||inFlight.current)return;version.current=body.version;setData(body.state);setUpdated(body.updatedAt);setOnline(true);if(!profileDirtyRef.current)setProfile(body.state.profile)}catch(e){setOnline(false);setError(e instanceof Error?e.message:'连接失败，请刷新重试。')}
+  try{const r=await Promise.race([lifeFetch(),new Promise<Response>((_,reject)=>setTimeout(()=>reject(new Error('连接云端超时，请检查网络后重试。')),15000))]);const body:any=await r.json();if(!r.ok)throw new Error(body.error||'云端暂时无法读取。');if(stamp!==generation.current||inFlight.current)return;version.current=body.version;setData(body.state);setUpdated(body.updatedAt);setOnline(true);if(!profileDirtyRef.current)setProfile(body.state.profile)}catch(e){setOnline(false);setError(e instanceof Error?e.message:'连接失败，请刷新重试。')}
  },[]);
  useEffect(()=>{void refresh();void loadAppearance().catch(()=>{});const timer=setInterval(()=>{if(!document.hidden)void refresh()},30000);const onFocus=()=>void refresh();window.addEventListener('focus',onFocus);const path=new URLSearchParams(location.search).get('view');if(tabs.some(t=>t.id===path))setTab(path!);return()=>{clearInterval(timer);window.removeEventListener('focus',onFocus)}},[refresh]);
  function navigate(next:string){setTab(next);history.replaceState(null,'',`?view=${next}`);window.scrollTo({top:0,behavior:'smooth'})}
