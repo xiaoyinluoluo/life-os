@@ -13,6 +13,12 @@ export async function listRecords(kind:RecordKind, page=0) {
   if(error) throw error;
   return data as CloudRecord[];
 }
+export async function countRecords(kind:RecordKind){
+  const user=await owner();
+  const {count,error}=await supabase.from('life_records').select('*',{count:'exact',head:true}).eq('user_id',user).eq('kind',kind).is('deleted_at',null);
+  if(error)throw error;
+  return count||0;
+}
 export async function createRecord(kind:RecordKind, id:string, data:Record<string,unknown>) {
   const user=await owner();
   const result=await supabase.from('life_records').insert({user_id:user,kind,id,data}).select().single();

@@ -1,5 +1,5 @@
 import { supabase } from './client';
-import { createRecord, listRecords, updateRecord, type CloudRecord, type RecordKind } from './records';
+import { countRecords, createRecord, listRecords, updateRecord, type CloudRecord, type RecordKind } from './records';
 
 const kinds:RecordKind[]=['profile','goal','project','task','review','note','message','decision','setting'];
 const arrays:RecordKind[]=['goal','project','task','review','note','message','decision'];
@@ -8,13 +8,18 @@ const uuid=()=>crypto.randomUUID();
 const empty=()=>({profile:{name:'我的 Life OS',stage:'探索与成长',goal:'',status:''},goals:[],projects:[],tasks:[],reviews:[],notes:[],messages:[],decisions:[],settings:[]});
 const plural=(kind:RecordKind)=>kind==='message'?'messages':kind==='review'?'reviews':kind==='goal'?'goals':kind==='project'?'projects':kind==='task'?'tasks':kind==='note'?'notes':kind==='decision'?'decisions':'settings';
 let cache=new Map<string,CloudRecord>();
+const pageLimits=new Map<RecordKind,number>();
+const exhaustedKinds=new Map<RecordKind,boolean>();
+export function canLoadMore(kind:RecordKind,count:number){return count>0&&count%50===0&&!exhaustedKinds.get(kind)}
+export async function loadMoreRecords(kind:RecordKind){pageLimits.set(kind,(pageLimits.get(kind)||1)+1);return reload()}
 function key(kind:RecordKind,id:string){return `${kind}:${id}`}
 async function reload(){
  const all:CloudRecord[]=[];
- for(const kind of kinds){for(let page=0;;page++) {const rows=await listRecords(kind,page);all.push(...rows);if(rows.length<50)break}}
+ for(const kind of kinds){for(let page=0;page<(pageLimits.get(kind)||1);page++) {const rows=await listRecords(kind,page);all.push(...rows);exhaustedKinds.set(kind,rows.length<50);if(rows.length<50)break}}
  cache=new Map(all.map(r=>[key(r.kind,r.id),r]));
  const state:any=empty();
  for(const row of all){if(row.kind==='profile'&&row.id==='main')state.profile=row.data;else if(arrays.includes(row.kind))state[plural(row.kind)].push(row.data);else if(row.kind==='setting')state.settings.push(row.data)}
+ state.totals=Object.fromEntries(await Promise.all(arrays.map(async kind=>[plural(kind),await countRecords(kind)])));
  return {state,version:all.map(r=>`${r.kind}/${r.id}/${r.version}`).sort().join('|'),updatedAt:all.reduce((max,r)=>r.updated_at>max?r.updated_at:max,'')};
 }
 async function insert(kind:RecordKind,data:Record<string,unknown>,id=String(data.id||uuid())){const row=await createRecord(kind,id,{...data,id});cache.set(key(kind,id),row);return row}
