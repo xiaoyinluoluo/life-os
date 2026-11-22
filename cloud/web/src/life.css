@@ -15,3 +15,13 @@ html.has-wallpaper .workspace::before{display:none}
 html.has-wallpaper .sidebar,html.has-wallpaper .topbar{background:rgba(23,45,32,.72);color:#fff}
 html.has-wallpaper .main{color:#fff;text-shadow:0 1px 4px #000}
 html.has-wallpaper .panel{color:#fff9e9;background:rgba(34,68,40,.82);text-shadow:none}
+
+/* Full-page background selected for Life OS. */
+body{background:transparent}
+body::before,html.has-wallpaper body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:url('/life-os/goats-background.jpg') center center / cover no-repeat;filter:blur(var(--wallpaper-blur,0px));transform:scale(1.04)}
+.app-shell,html.has-wallpaper .app-shell{position:relative;z-index:1;background:transparent;isolation:isolate}
+.workspace,html.has-wallpaper .workspace{background:transparent}
+.workspace::before,html.has-wallpaper .workspace::before{display:none}
+.sidebar,.topbar,html.has-wallpaper .sidebar,html.has-wallpaper .topbar{background:rgba(23,45,32,.72);color:#fff}
+.main,html.has-wallpaper .main{color:#fff;text-shadow:0 1px 4px #000}
+.panel,html.has-wallpaper .panel{color:#fff9e9;background:rgba(34,68,40,.82);text-shadow:none}
