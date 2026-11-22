@@ -42,7 +42,12 @@ export async function cloudFetch(command?:any,version?:string):Promise<Response>
    case 'review': await insert('review',{id:uuid(),content:command.content,createdAt:now()});break;
    case 'weekly-review': await insert('review',{id:uuid(),period:'weekly',content:command.content,createdAt:now()});break;
    case 'note': {const old=state.notes.find((x:any)=>x.name===command.name);if(old)await replace('note',old.id,{...old,content:command.content,updatedAt:now()});else await insert('note',{id:uuid(),name:command.name,content:command.content,updatedAt:now()});break}
-   case 'chat': {const goal=state.profile.goal||state.goals[0]?.title||'你正在探索的方向';const reply={analysis:`你提到了“${command.message.slice(0,100)}”。结合当前目标“${goal}”，先把问题缩小到今天能验证的一步。`,suggestions:['写下你最想得到的具体结果。','完成一个今天能做的小尝试。','记录结果后再决定下一步。'],next_actions:['明确结果','完成一次尝试','记录收获']};await insert('message',{id:uuid(),message:command.message,reply,createdAt:now()});break}
+   case 'chat': {
+    const {data:reply,error}=await supabase.functions.invoke('life-companion',{body:{message:command.message}});
+    if(error||!reply?.analysis)throw new Error('DeepSeek 暂未响应。请检查账号授权、云端密钥和网络。');
+    await insert('message',{id:uuid(),message:command.message,reply,model:'DeepSeek',createdAt:now()});
+    break;
+   }
    case 'preview':result=plan(command.message,command.goalId,state);sessionStorage.setItem('life-plan',JSON.stringify(result));break;
    case 'cancel': sessionStorage.removeItem('life-plan');break;
    case 'confirm': {const pending=JSON.parse(sessionStorage.getItem('life-plan')||'null');if(!pending||pending.id!==command.id||pending.token!==command.token||Date.parse(pending.expiresAt)<Date.now())throw new Error('方案已过期，请重新预览。');const projectId=uuid();await insert('project',{id:projectId,goalId:pending.goalId,title:pending.title,description:pending.description,createdAt:now()});for(const title of pending.tasks)await insert('task',{id:uuid(),projectId,title,status:'todo',dueDate:new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai'}).format(new Date()),priority:'medium',completedAt:null});sessionStorage.removeItem('life-plan');result={projectId};break}
@@ -51,3 +56,4 @@ export async function cloudFetch(command?:any,version?:string):Promise<Response>
   return Response.json({...await reload(),result});
  }catch(e){return Response.json({error:e instanceof Error?e.message:'云端操作失败。'},{status:e instanceof Error&&/变化|更新|冲突/.test(e.message)?409:400})}
 }
+
