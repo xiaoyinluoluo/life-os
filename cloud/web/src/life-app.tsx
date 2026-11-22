@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { LayoutDashboard, Sprout, MessageCircle, ListTodo, BookOpen, Cloud, RefreshCw, ArrowUpRight, Download, Check, ArrowRight, UserRound, LogOut, Plus, FileText } from 'lucide-react';
 import { cloudFetch as lifeFetch } from './cloud-fetch';
 import { exportAllRecords, importMissing, previewImport, type ImportPreview } from './importer';
+import ReadingSync from './reading-sync';
 import AppearanceSettings, { loadAppearance } from './appearance';
 import { supabase } from './client';
 import { canLoadMore, loadMoreRecords } from './cloud-fetch';
@@ -49,7 +50,7 @@ export default function LifeApp(){
  <main className="main"><div className="page-heading"><div><p className="eyebrow">A LITTLE MORE INTENTIONAL, EVERY DAY</p><h1>{tabs.find(t=>t.id===tab)?.label}</h1><p className="page-description">{tab==='dashboard'?'看见此刻的自己，把重要的事推进一小步。':tab==='companion'?'从一个想法开始，把下一步变得清晰。':tab==='planning'?'让长期目标，落在每天可以完成的行动里。':tab==='reflection'?'留下真实的感受，也看见微小的进步。':tab==='knowledge'?'把有价值的笔记，放进自己的成长空间。':'从了解自己开始，给每一次行动一个方向。'}</p></div><span className="today">{new Date().toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai',month:'long',day:'numeric',weekday:'long'})}</span></div>
  {error&&<div className="error" role="alert">{error}<button aria-label="关闭提示" onClick={()=>setError('')}>×</button></div>}
  {!data?<Section title="正在连接你的云端空间"><p className="muted">首次进入需要几秒钟。数据仅向当前登录账号开放。</p><button className="primary" onClick={()=>void refresh()}>重新连接</button></Section>:<>
- {tab==='settings'&&<AppearanceSettings/>}
+ {tab==='settings'&&<><AppearanceSettings/><ReadingSync/></>}
  {tab==='dashboard'&&<><section className="hero"><div><span className="hero-label"><span/>为更清晰的生活，留一处空间</span><h2>你好，{data.profile.name}。<br/><span>今天，也向自己靠近一点。</span></h2><p>{data.profile.goal||'还没有写下核心目标？先从一件你在意的事情开始。'}</p><button className="hero-button" onClick={()=>navigate(data.goals.length?'companion':'profile')}>{data.goals.length?'和生命伙伴聊聊':'完善我的档案'}<ArrowRight size={17}/></button></div><div className="hero-art" aria-hidden="true"><div className="orbit one"/><div className="orbit two"/><div className="orbit three"/><Sprout size={74} strokeWidth={1}/><span>GROW AT YOUR OWN PACE</span></div></section>
  <div className="stats"><div><span>正在追求的目标</span><strong>{data.totals?.goals??data.goals.length}<small>个</small></strong></div><div><span>已完成的行动</span><strong>{done}<small>/ {total}</small></strong></div><div><span>留下的复盘</span><strong>{data.totals?.reviews??data.reviews.length}<small>篇</small></strong></div><div><span>积累的笔记</span><strong>{data.totals?.notes??data.notes.length}<small>篇</small></strong></div></div>
  <div className="two-columns"><Section title="行动清单" aside={<button className="link-button" onClick={()=>navigate('planning')}>全部行动 <ArrowUpRight size={14}/></button>}><div className="progress-label"><span>当前已加载任务进度</span><b>{percentage}%</b></div><div className="progress" role="progressbar" aria-label="行动完成进度" aria-valuenow={percentage} aria-valuemin={0} aria-valuemax={100}><i style={{width:`${percentage}%`}}/></div>{total?taskList(data.tasks.filter(t=>t.status!=='done').slice(0,5)): <Empty>先创建目标，再让伙伴帮你拆出行动计划。</Empty>}</Section>
@@ -65,4 +66,5 @@ export default function LifeApp(){
  </>}
  <footer className="main-footer"><span>Life OS · 以自己的节奏成长</span><span>{updated?`上次同步 ${time(updated)}`:'等待首次同步'} · 每 30 秒自动刷新</span></footer></main></div></div>
 }
+
 
