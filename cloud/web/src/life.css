@@ -7,3 +7,11 @@
 .workspace{position:relative;isolation:isolate}
 .workspace::before{content:"";position:fixed;inset:0;pointer-events:none;backdrop-filter:blur(var(--wallpaper-blur,0px));z-index:-1}
 .panel{background:rgba(244,250,241,.88);backdrop-filter:blur(12px)}
+html.has-wallpaper body{background:transparent}
+html.has-wallpaper body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background-image:var(--life-wallpaper);background-size:cover;background-position:center;background-repeat:no-repeat;filter:blur(var(--wallpaper-blur,0px));transform:scale(1.04)}
+html.has-wallpaper .app-shell{position:relative;z-index:1;background:transparent;isolation:isolate}
+html.has-wallpaper .workspace{background:transparent}
+html.has-wallpaper .workspace::before{display:none}
+html.has-wallpaper .sidebar,html.has-wallpaper .topbar{background:rgba(23,45,32,.72);color:#fff}
+html.has-wallpaper .main{color:#fff;text-shadow:0 1px 4px #000}
+html.has-wallpaper .panel{color:#fff9e9;background:rgba(34,68,40,.82);text-shadow:none}

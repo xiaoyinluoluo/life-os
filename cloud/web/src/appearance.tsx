@@ -10,7 +10,7 @@ export async function applyAppearance(p:Appearance){
  const root=document.documentElement;
  root.style.fontSize=`${Math.max(80,Math.min(130,p.fontSize||100))}%`;
  root.style.setProperty('--wallpaper-blur',`${Math.max(0,Math.min(24,p.blur||0))}px`);
- if(p.wallpaper){const {data,error}=await supabase.storage.from(bucket).createSignedUrl(p.wallpaper,3600);if(error)throw error;wallpaperUrl=data.signedUrl;root.style.setProperty('--life-wallpaper',`url("${wallpaperUrl}")`)}else root.style.removeProperty('--life-wallpaper');
+ if(p.wallpaper){const {data,error}=await supabase.storage.from(bucket).createSignedUrl(p.wallpaper,3600);if(error)throw error;wallpaperUrl=data.signedUrl;root.style.setProperty('--life-wallpaper',`url("${wallpaperUrl}")`);root.classList.add('has-wallpaper')}else{root.style.removeProperty('--life-wallpaper');root.classList.remove('has-wallpaper')}
  if(p.font){const {data,error}=await supabase.storage.from(bucket).createSignedUrl(p.font,3600);if(error)throw error;fontUrl=data.signedUrl;const font=new FontFace('LifeOSCloud',`url("${fontUrl}")`);await font.load();(document.fonts as FontFaceSet & {add(font:FontFace):void}).add(font);root.style.setProperty('--life-font','LifeOSCloud, sans-serif')}else root.style.removeProperty('--life-font');
 }
 export async function loadAppearance(){const row=await getRecord('setting','appearance');if(row)await applyAppearance(row.data as Appearance)}
