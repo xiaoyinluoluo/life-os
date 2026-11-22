@@ -25,3 +25,13 @@ body::before,html.has-wallpaper body::before{content:"";position:fixed;inset:0;z
 .sidebar,.topbar,html.has-wallpaper .sidebar,html.has-wallpaper .topbar{background:rgba(23,45,32,.72);color:#fff}
 .main,html.has-wallpaper .main{color:#fff;text-shadow:0 1px 4px #000}
 .panel,html.has-wallpaper .panel{color:#fff9e9;background:rgba(34,68,40,.82);text-shadow:none}
+
+/* Handwritten lettering and translucent earth tones. */
+:root,body,button,input,textarea,select{font-family:var(--life-font, "Kaiti SC", KaiTi, STKaiti, "DFKai-SB", cursive),sans-serif}
+.stats>div,.soft-note,.chat-user,.note pre,.proposal,.notice,.auth-card{background:rgba(91,57,35,.76);color:#fff3da;border-color:rgba(226,197,154,.3);backdrop-filter:blur(10px)}
+.hero,.panel,.sidebar,.topbar,.nav-item.active,.primary,.hero-button{background-color:rgba(30,83,50,.76);backdrop-filter:blur(10px)}
+.task-state,.tag,.secondary,.sync-pill,.file-label,.nav-item:hover{background:rgba(102,66,40,.7);color:#fff1d7}
+.stats span,.stats strong,.stats small,.panel .muted,.panel label,.panel p,.panel h2,.panel h3,.soft-note p,.task small,.task-state,.notice p,.note pre{color:#fff1d7}
+input:not([type=checkbox]):not([type=range]):not([type=file]),textarea,select{background:rgba(91,57,35,.78);border-color:rgba(226,197,154,.42);color:#fff8e9}
+input::placeholder,textarea::placeholder{color:rgba(255,240,217,.7)}
+
