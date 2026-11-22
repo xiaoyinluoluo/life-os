@@ -13,6 +13,7 @@ __pycache__/
 *.log
 .DS_Store
 .runtime/
+backup/
 
 # Upload privacy and local artifacts
 .env*
