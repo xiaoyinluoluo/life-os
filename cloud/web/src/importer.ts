@@ -1,6 +1,11 @@
 import { createRecord, getRecord, listRecords, type RecordKind } from './records';
 
 const allowed = new Set<RecordKind>(['profile','goal','project','task','review','note','message','decision','setting']);
+function canonical(value:unknown):string {
+ if(Array.isArray(value))return '['+value.map(canonical).join(',')+']';
+ if(value!==null&&typeof value==='object')return '{'+Object.entries(value).sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>JSON.stringify(k)+':'+canonical(v)).join(',')+'}';
+ return JSON.stringify(value);
+}
 export type ImportItem = {kind:RecordKind;id:string;data:Record<string,unknown>};
 export type ImportPreview = {items:ImportItem[];counts:Record<string,number>;existing:ImportItem[];missing:ImportItem[];conflicts:ImportItem[]};
 
@@ -14,7 +19,7 @@ export async function previewImport(text:string):Promise<ImportPreview>{
  });
  const keys=new Set<string>();for(const r of items){const key=`${r.kind}:${r.id}`;if(keys.has(key))throw new Error('迁移文件含重复 ID。');keys.add(key)}
  const existing:ImportItem[]=[],missing:ImportItem[]=[],conflicts:ImportItem[]=[];
- for(const item of items){const old=await getRecord(item.kind,item.id);if(!old||old.deleted_at)missing.push(item);else if(JSON.stringify(old.data)===JSON.stringify(item.data))existing.push(item);else conflicts.push(item)}
+ for(const item of items){const old=await getRecord(item.kind,item.id);if(!old)missing.push(item);else if(!old.deleted_at&&canonical(old.data)===canonical(item.data))existing.push(item);else conflicts.push(item)}
  return {items,existing,missing,conflicts,counts:items.reduce((a,r)=>(a[r.kind]=(a[r.kind]||0)+1,a),{} as Record<string,number>)};
 }
 
