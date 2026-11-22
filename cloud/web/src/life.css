@@ -3,7 +3,7 @@
 .mobile-tools{display:none}@media(max-width:700px){.sidebar nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;gap:5px}.nav-item{padding:10px 6px;justify-content:center}.mobile-tools{display:flex;justify-content:flex-end;gap:20px;padding:0 20px}.mobile-tools .text-button{font-size:10px}}
 /* User supplied assets remain in a private bucket; only signed URLs are rendered. */
 :root{font-family:var(--life-font),Inter,"Segoe UI","Microsoft YaHei",sans-serif}
-.workspace{background-image:linear-gradient(rgba(247,249,247,.72),rgba(247,249,247,.72)),var(--life-wallpaper);background-size:cover;background-position:center;background-attachment:fixed}
+.workspace{background-image:linear-gradient(rgba(247,249,247,.25),rgba(247,249,247,.25)),var(--life-wallpaper,none);background-size:cover;background-position:center;background-attachment:fixed}
 .workspace{position:relative;isolation:isolate}
 .workspace::before{content:"";position:fixed;inset:0;pointer-events:none;backdrop-filter:blur(var(--wallpaper-blur,0px));z-index:-1}
 .panel{background:rgba(244,250,241,.88);backdrop-filter:blur(12px)}

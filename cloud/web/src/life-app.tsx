@@ -30,7 +30,7 @@ export default function LifeApp(){
   const stamp=++generation.current;
   try{const r=await Promise.race([lifeFetch(),new Promise<Response>((_,reject)=>setTimeout(()=>reject(new Error('连接云端超时，请检查网络后重试。')),15000))]);const body:any=await r.json();if(!r.ok)throw new Error(body.error||'云端暂时无法读取。');if(stamp!==generation.current||inFlight.current)return;version.current=body.version;setData(body.state);setUpdated(body.updatedAt);setOnline(true);if(!profileDirtyRef.current)setProfile(body.state.profile)}catch(e){setOnline(false);setError(e instanceof Error?e.message:'连接失败，请刷新重试。')}
  },[]);
- useEffect(()=>{void refresh();void loadAppearance().catch(()=>{});const timer=setInterval(()=>{if(!document.hidden)void refresh()},30000);const onFocus=()=>void refresh();window.addEventListener('focus',onFocus);const path=new URLSearchParams(location.search).get('view');if(tabs.some(t=>t.id===path))setTab(path!);return()=>{clearInterval(timer);window.removeEventListener('focus',onFocus)}},[refresh]);
+ useEffect(()=>{void refresh();void loadAppearance().catch(()=>{});const appearanceTimer=setInterval(()=>void loadAppearance().catch(()=>{}),45*60*1000);const timer=setInterval(()=>{if(!document.hidden)void refresh()},30000);const onFocus=()=>void refresh();window.addEventListener('focus',onFocus);const path=new URLSearchParams(location.search).get('view');if(tabs.some(t=>t.id===path))setTab(path!);return()=>{clearInterval(timer);clearInterval(appearanceTimer);window.removeEventListener('focus',onFocus)}},[refresh]);
  function navigate(next:string){setTab(next);history.replaceState(null,'',`?view=${next}`);window.scrollTo({top:0,behavior:'smooth'})}
  async function save(command:any):Promise<any>{
   if(inFlight.current)return null;inFlight.current=true;generation.current++;setBusy(true);setError('');
@@ -66,5 +66,6 @@ export default function LifeApp(){
  </>}
  <footer className="main-footer"><span>Life OS · 以自己的节奏成长</span><span>{updated?`上次同步 ${time(updated)}`:'等待首次同步'} · 每 30 秒自动刷新</span></footer></main></div></div>
 }
+
 
 
