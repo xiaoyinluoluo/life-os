@@ -1,4 +1,4 @@
-import { createRecord, getRecord, type RecordKind } from './records';
+import { createRecord, getRecord, listRecords, type RecordKind } from './records';
 
 const allowed = new Set<RecordKind>(['profile','goal','project','task','review','note','message','decision','setting']);
 export type ImportItem = {kind:RecordKind;id:string;data:Record<string,unknown>};
@@ -27,4 +27,9 @@ export async function importMissing(preview:ImportPreview,onProgress:(done:numbe
   onProgress(++done);
  }
  return done;
+}
+export async function exportAllRecords(){
+ const items:ImportItem[]=[];
+ for(const kind of allowed){for(let page=0;;page++){const rows=await listRecords(kind,page);items.push(...rows.map(r=>({kind:r.kind,id:r.id,data:r.data})));if(rows.length<50)break}}
+ return {format:'life-os-import-v1',exportedAt:new Date().toISOString(),records:items};
 }
